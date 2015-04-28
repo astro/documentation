@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title> Publishers - Superfeedr Documentation </title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/front.css">
+  <link rel="stylesheet" href="/css/prism.css">
+  <link rel="stylesheet" href="/css/documentation.css">
+  <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,400italic|Source+Code+Pro:400,600" rel="stylesheet" type="text/css">
+  <link rel="shortcut icon" href="/favicon.png">
+</head>
+<body>
+  <header role="navigation" class="header">
+    <div class="container">
+      <h1 class="header-logo">
+        <a href="https://superfeedr.com/">
+          <img src="/img/logo.png" alt=""> <span>Superfeedr</span>
+        </a>
+      </h1>
+      <nav class="nav-header">
+        <ul class="nav-items">
+          <li class="nav-item">
+            <a href="https://superfeedr.com/about" class="nav-link">About</a>
+          </li>
+          <li class="nav-item">
+            <a href="https://superfeedr.com/publisher" class="nav-link">Publishers</a>
+          </li>
+          <li class="nav-item">
+            <a href="https://superfeedr.com/subscriber" class="nav-link">Subscribers</a>
+          </li>
+          <li class="nav-item">
+            <a href="https://superfeedr.com/subscriber/pricing" class="nav-link">Pricing</a>
+          </li>
+          <li class="nav-item">
+            <a href="https://superfeedr.com/login" class="nav-link nav-link-bubble">Login</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <main class="container body">
+    <header class="body-header">
+	<h2>
+		<span>Documentation › </span> <strong>Publishers</strong>
+	</h2>
+
+	<nav class="docs-nav">
+		<a href="/" class="docs-nav-link">Introduction</a>
+		<a href="/subscribers.html" class="docs-nav-link">Subscribers</a>
+		<a href="/publishers.html" class="docs-nav-link docs-nav-link-current">Publishers</a>
+		<a href="/trackers.html" class="docs-nav-link">Trackers</a>
+		<a href="/schema.html" class="docs-nav-link">Schema</a>
+		<a href="/misc.html" class="docs-nav-link">Miscellaneous</a>
+	</nav>
+</header>
+<div class="body-content">
+	<div class="sticky-wrapper">
+		<div class="column column--quarter docs-inline-nav-wrap">
+			<header class="docs-inline-nav-header">
+				<h3>Contents</h3>
+			</header>
+
+			<ul id="docsnav" class="docs-inline-nav nav nav-list"><li>
+        <a href="#discovery">Discovery</a>
+        </li>
+        <li>
+        <a href="#ping">Ping</a>
+        </li>
+        <li>
+        <a href="#subscription-callback">Subscription Callback</a>
+        </li>
+        <li>
+        <a href="#fat-pings">Fat Pings</a>
+        </li>
+        </ul>
+
+
+		</div>
+	</div>
+	<section class="column column--three-quarters docs-content-text">
+		<h2 id="introduction">Introduction</h2>
+
+<p>All the <a href="http://pubsubhubbub.superfeedr.com/">PubSubHubbubb</a> hubs hosted here at Superfeedr are compliant with the core specifications for versions <a href="http://pubsubhubbub.googlecode.com/svn/trunk/pubsubhubbub-core-0.3.html">0.3</a> and <a href="http://pubsubhubbub.googlecode.com/svn/trunk/pubsubhubbub-core-0.4.html">0.4</a>.</p>
+
+<p>To enable your publisher hub and get subscribers coming to your real-time feeds, you need to set up <a href="#discovery">discovery</a> and <a href="#ping">ping</a>.</p>
+
+<h2 id="discovery">Discovery</h2>
+
+<p>Discovery tells your current and future subscribers who poll your resources that they can get content from your Superfeedr hosted hub.</p>
+
+<p>It’s as easy as adding the following to your resources:</p>
+
+<h3 id="any-http-resources">Any HTTP resources</h3>
+
+<p>For HTTP resources, PubSubHubbub uses discovery in the HTTP Headers. Include the following HTTP Header as defined in <a href="http://tools.ietf.org/html/rfc5988">RFC5988</a> with each resource:</p>
+
+<p>For HTTP resources, PubSubHubbub uses discovery in the HTTP Headers.</p>
+
+<pre data-line=""><code class="language-javascript">Link: &lt;https://your-hub-name.superfeedr.com/&gt;; rel=&quot;hub&quot;
+Link: &lt;http://your.resource.url&gt;; rel=&quot;self&quot;</code></pre>
+
+<h3 id="rss">RSS</h3>
+
+<pre data-line=""><code class="language-markup">&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;rss&gt;
+ &lt;channel&gt;
+  &lt;title&gt;...&lt;/title&gt;
+  &lt;description&gt;...&lt;/description&gt;
+  &lt;link&gt;...&lt;/link&gt;
+
+  &lt;!-- PubSubHubbub Discovery --&gt;
+  &lt;link rel=&quot;hub&quot;  href=&quot;https://your-hub-name.superfeedr.com/&quot; xmlns=&quot;http://www.w3.org/2005/Atom&quot; /&gt;
+  &lt;link rel=&quot;self&quot; href=&quot;http://your.feed.url&quot; xmlns=&quot;http://www.w3.org/2005/Atom&quot; /&gt;
+  &lt;!-- End Of PubSubHubbub Discovery --&gt;
+  ...
+ &lt;/channel&gt;
+&lt;/rss&gt;</code></pre>
+
+<h3 id="atom">Atom</h3>
+
+<pre data-line=""><code class="language-markup">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;feed xmlns=&quot;http://www.w3.org/2005/Atom&quot;&gt;
+ &lt;title&gt;...&lt;/title&gt;
+ &lt;link href=&quot;http://your.feed.url&quot; rel=&quot;self&quot; type=&quot;application/atom+xml&quot;/&gt;
+
+ &lt;!-- PubSubHubbub Discovery --&gt;
+ &lt;link rel=&quot;hub&quot; href=&quot;https://&lt;your-hub-name&gt;.superfeedr.com/&quot; /&gt;
+ &lt;!-- End Of PubSubHubbub Discovery --&gt;
+
+ &lt;updated&gt;...&lt;/updated&gt;
+ &lt;id&gt;...&lt;/id&gt;
+ ...
+&lt;/feed&gt;</code></pre>
+
+<h2 id="ping">Ping</h2>
+
+<p>The next step is to ping the hub whenever you update the content of any resource.</p>
+
+<p>This will allow us to fetch this specific resource, identify what is new, and then push the update to your subscribers.</p>
+
+<p>Send a POST request to <code>http://&lt;your-hub-name&gt;.superfeedr.com/</code>, with the following keys and values:</p>
+
+<ul>
+  <li><code>hub.mode="publish"</code></li>
+  <li><code>hub.url=&lt;the URL of the resource that was updated&gt;</code></li>
+</ul>
+
+<p>You can submit multiple URLs per ping, either by using an array syntax like <code>hub.url[]=&lt;url1&gt;</code> and <code>hub.url[]=&lt;url2&gt;</code>, or by sending a coma separated list or url-encoded URLs like this <code>hub.url=&lt;url1&gt;;&lt;url2&gt;</code>.</p>
+
+<p><em>Note</em>: If you’ve already implemented any type of ping, please get in touch, as we can probably receive it – we want to make it as easy as possible for you to implement the PubSubHubbub protocol.</p>
+
+<h2 id="subscription-callback">Subscription callback</h2>
+
+<p><strong>This feature is for Pro Hubs only</strong>.</p>
+
+<p>Your Superfeedr hosted hub allows access to your feeds, and we want to make sure you have direct control over this.</p>
+
+<ul>
+  <li>If you want to <em>allow subscription</em>, just return <code>204</code>.</li>
+  <li>If you do not want to allow the subscription, please return <code>401</code>. 
+    <ul>
+      <li>Please include your reason for refusal in the body of the response as text, so we can forward this to the subscriber. The message can include requirements for subscription to your hub (such as the inclusion of an API key or contact information). We will forward any additional parameter submitted by the subscriber to your callback URL.</li>
+    </ul>
+  </li>
+</ul>
+
+<p>If the URL is not accessible, or if you don’t return a <code>204</code> code, we will refuse all subscriptions to the resource.</p>
+
+<h2 id="fat-pings">Fat Pings</h2>
+
+<p><strong>This feature is for Pro Hubs only</strong>.</p>
+
+<p>If you have millions of feeds in our system, and are constantly pinging us with new content, we suggest you <strong>fat ping</strong>* us instead.</p>
+
+<p>The standard PubSubHubbub protocol specifies that the publisher (you) does light pings to the hub, because the origin of these pings cannot be verified. When we get a light ping, we will poll your feed to identify the new content.</p>
+
+<p>However, this polling can become expensive and draining if you have tens of thousands of feeds – or more. In this case, performing fat pings is much more time and cost effective.</p>
+
+<p>You will use the same syntax as light pings, but you would add two additional parameters:</p>
+
+<ul>
+  <li><code>hub.content</code> : the content of the feed, including only the new entry or entries. Superfeedr will parse this content directly, rather than polling your feeds.</li>
+  <li><code>hub.signature</code> : this is an HMAC signature computed with the secret shown in your hub’s settings, and the <code>hub.content</code>. This lets us know the content is coming from you and hasn’t been forged by a third party.</li>
+</ul>
+
+
+	</section>
+</div>
+
+  </main>
+  <div class="footer container">
+    <footer class="site-footer">
+      <ul class="site-footer__list">
+        <li class="site-footer__item">
+          <a href="/" class="site-footer__link">Documentation</a>
+        </li>
+        <li class="site-footer__item">
+          <a href="https://superfeedr.com/subscriber/pricing" class="site-footer__link">Pricing</a>
+        </li>
+        <li class="site-footer__item">
+          <a href="https://superfeedr.com/about" class="site-footer__link">Contact</a>
+        </li>
+        <li class="site-footer__item">
+          <a href="https://github.com/superfeedr/documentation/issues" class="site-footer__link">Support & Community</a>
+        </li>
+        <li class="site-footer__item">
+          <a href="http://blog.superfeedr.com/" class="site-footer__link">Blog</a>
+        </li>
+        <li class="site-footer__item">
+          <a href="https://superfeedr.com/terms" class="site-footer__link">Terms</a>
+        </li>
+      </ul>
+      <ul class="site-footer__meta">
+        <p class="site-footer__copyright">© 2009–2015 Superfeedr</p>
+      </ul>
+    </footer>
+  </div>
+</body>
+<script src="/js/jquery.min.js">
+</script>
+<script src="/js/prism.js">
+</script>
+<script src="/js/documentation.js">
+</script>
+</html>
+
